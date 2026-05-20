@@ -28,31 +28,10 @@ from urllib.parse import urlparse
 
 import httpx
 
+from config import PLATFORM_REGISTRY
+
 DEFAULT_INPUT  = "data/companies.csv"
 DEFAULT_OUTPUT = "data/companies.csv"
-
-PLATFORM_REGISTRY: dict[str, dict] = {
-    "greenhouse": {
-        "hosts":   {"job-boards.greenhouse.io", "job-boards.eu.greenhouse.io"},
-        "api_url": "https://boards-api.greenhouse.io/v1/boards/{token}/jobs",
-    },
-    "ashby": {
-        "hosts":   {"jobs.ashbyhq.com"},
-        "api_url": "https://api.ashbyhq.com/posting-api/job-board/{token}",
-    },
-    "lever": {
-        "hosts":   {"jobs.lever.co"},
-        "api_url": "https://api.lever.co/v0/postings/{token}?mode=json",
-    },
-    "workable": {
-        "hosts":   {"apply.workable.com"},
-        "api_url": "https://apply.workable.com/api/v1/widget/accounts/{token}",
-    },
-    "gem": {
-        "hosts":   {"jobs.gem.com"},
-        "api_url": "https://api.gem.com/job_board/v0/{token}/job_posts/",
-    },
-}
 
 
 def extract_board_token(url: str, platform: str) -> str | None:
