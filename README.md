@@ -12,7 +12,7 @@ The tool periodically scans the careers pages for matching job titles.
 ## Setup
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.12.13
 - pip
 
 ### Install dependencies
