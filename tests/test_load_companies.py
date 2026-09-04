@@ -21,10 +21,10 @@ def test_returns_list_of_dicts():
 def test_required_keys_present():
     companies = load_companies(FIXTURE)
     for c in companies:
-        assert "company_name"       in c
+        assert "company_name" in c
         assert "open_positions_url" in c
-        assert "hr_platform"        in c
-        assert "api_token"                in c
+        assert "hr_platform" in c
+        assert "api_token" in c
 
 
 def test_no_internal_rating_key_leaked():
@@ -60,10 +60,10 @@ def test_other_platforms_have_empty_api():
 def test_routing_split_is_correct():
     companies = load_companies(FIXTURE)
     api_companies = [c for c in companies if c["api_token"]]
-    pw_companies  = [c for c in companies if not c["api_token"]]
+    pw_companies = [c for c in companies if not c["api_token"]]
     assert len(api_companies) + len(pw_companies) == len(companies)
     assert len(api_companies) > 0
-    assert len(pw_companies)  > 0
+    assert len(pw_companies) > 0
 
 
 def test_only_no_click_true_included():
@@ -84,13 +84,12 @@ def test_no_duplicate_urls():
 
 def test_unsafe_url_schemes_are_skipped(tmp_path):
     csv_file = tmp_path / "companies.csv"
-    header = ["id", "rating", "company_name", "website", "open_positions_url",
-              "hr_platform", "no_click", "comment", "field", "api_token"]
+    header = ["id", "rating", "company_name", "website", "open_positions_url", "hr_platform", "no_click", "comment", "field", "api_token"]
     rows = [
-        ["1", "5", "Safe Co",  "", "https://safe.com/jobs",          "custom", "TRUE", "", "", ""],
-        ["2", "5", "File Co",  "", "file:///etc/passwd",              "custom", "TRUE", "", "", ""],
-        ["3", "5", "FTP Co",   "", "ftp://ftp.example.com/jobs",     "custom", "TRUE", "", "", ""],
-        ["4", "5", "No Scheme","", "//example.com/jobs",              "custom", "TRUE", "", "", ""],
+        ["1", "5", "Safe Co", "", "https://safe.com/jobs", "custom", "TRUE", "", "", ""],
+        ["2", "5", "File Co", "", "file:///etc/passwd", "custom", "TRUE", "", "", ""],
+        ["3", "5", "FTP Co", "", "ftp://ftp.example.com/jobs", "custom", "TRUE", "", "", ""],
+        ["4", "5", "No Scheme", "", "//example.com/jobs", "custom", "TRUE", "", "", ""],
     ]
     with open(csv_file, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -99,9 +98,9 @@ def test_unsafe_url_schemes_are_skipped(tmp_path):
 
     companies = load_companies(str(csv_file))
     names = {c["company_name"] for c in companies}
-    assert "Safe Co"   in names
-    assert "File Co"   not in names
-    assert "FTP Co"    not in names
+    assert "Safe Co" in names
+    assert "File Co" not in names
+    assert "FTP Co" not in names
     assert "No Scheme" not in names
 
 

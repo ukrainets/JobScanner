@@ -16,6 +16,7 @@ from crawlers.api_scanner import scan_api
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def make_response(status: int, jobs: list[dict]) -> MagicMock:
     resp = MagicMock(spec=httpx.Response)
     resp.status_code = status
@@ -36,14 +37,22 @@ def make_semaphore() -> asyncio.Semaphore:
 def run_scan(client, jobs_payload, titles, known_urls=None, on_match=None):
     """Convenience wrapper that runs scan_api with the Greenhouse extractor."""
     return scan_api(
-        client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-        titles, "data/match.csv", asyncio.Lock(), known_urls or set(),
-        extractor=extract_greenhouse_jobs, platform_label="Greenhouse",
+        client,
+        make_semaphore(),
+        "Acme",
+        "https://api.example.com/jobs",
+        titles,
+        "data/match.csv",
+        asyncio.Lock(),
+        known_urls or set(),
+        extractor=extract_greenhouse_jobs,
+        platform_label="Greenhouse",
         on_match=on_match,
     )
 
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_match_found_is_returned():

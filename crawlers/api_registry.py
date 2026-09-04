@@ -13,8 +13,8 @@ from crawlers.api_workable import extract_workable_jobs
 # Maps lowercase hr_platform value → (extractor callable, console label)
 API_EXTRACTORS: dict[str, tuple] = {
     "greenhouse": (extract_greenhouse_jobs, "Greenhouse"),
-    "ashby":      (extract_ashby_jobs,      "Ashby"),
-    "lever":      (extract_lever_jobs,      "Lever"),
-    "workable":   (extract_workable_jobs,   "Workable"),
-    "gem":        (extract_gem_jobs,        "Gem"),
+    "ashby": (extract_ashby_jobs, "Ashby"),
+    "lever": (extract_lever_jobs, "Lever"),
+    "workable": (extract_workable_jobs, "Workable"),
+    "gem": (extract_gem_jobs, "Gem"),
 }

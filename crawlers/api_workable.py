@@ -19,8 +19,8 @@ def extract_workable_jobs(data: dict) -> list[tuple[str, str, dict]]:
             continue
         loc = job.get("location") or {}
         country = loc.get("country", "") if isinstance(loc, dict) else ""
-        state   = loc.get("region", "")  if isinstance(loc, dict) else ""
-        city    = loc.get("city", "")    if isinstance(loc, dict) else ""
+        state = loc.get("region", "") if isinstance(loc, dict) else ""
+        city = loc.get("city", "") if isinstance(loc, dict) else ""
         loc_str = ", ".join(filter(None, [city, state, country]))
         telecommuting = loc.get("telecommuting") if isinstance(loc, dict) else None
         if telecommuting is not None:
@@ -31,11 +31,17 @@ def extract_workable_jobs(data: dict) -> list[tuple[str, str, dict]]:
             is_remote = None
         emp_type = job.get("employment_type", "")
         is_full_time = ("full" in emp_type.lower()) if emp_type else None
-        result.append((title, url, {
-            "location": loc_str,
-            "country": country,
-            "state": state,
-            "is_remote": is_remote,
-            "is_full_time": is_full_time,
-        }))
+        result.append(
+            (
+                title,
+                url,
+                {
+                    "location": loc_str,
+                    "country": country,
+                    "state": state,
+                    "is_remote": is_remote,
+                    "is_full_time": is_full_time,
+                },
+            )
+        )
     return result

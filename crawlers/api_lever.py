@@ -35,11 +35,17 @@ def extract_lever_jobs(data) -> list[tuple[str, str, dict]]:
 
         is_full_time = ("full" in commitment.lower()) if commitment else None
 
-        result.append((title, url, {
-            "location": loc,
-            "country": "",
-            "state": "",
-            "is_remote": is_remote,
-            "is_full_time": is_full_time,
-        }))
+        result.append(
+            (
+                title,
+                url,
+                {
+                    "location": loc,
+                    "country": "",
+                    "state": "",
+                    "is_remote": is_remote,
+                    "is_full_time": is_full_time,
+                },
+            )
+        )
     return result

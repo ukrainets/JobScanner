@@ -15,6 +15,7 @@ from crawlers.api_scanner import scan_api
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def stub_extractor(data: dict) -> list[tuple[str, str, dict]]:
     """Returns whatever jobs list is in data as (title, url, meta) tuples."""
     return [(j["title"], j["url"], {}) for j in data.get("jobs", [])]
@@ -39,18 +40,26 @@ def make_semaphore() -> asyncio.Semaphore:
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_match_found_is_returned():
-    body   = {"jobs": [{"title": "QA Engineer", "url": "https://example.com/job/1"}]}
+    body = {"jobs": [{"title": "QA Engineer", "url": "https://example.com/job/1"}]}
     client = make_client(make_response(200, body))
     write_lock = asyncio.Lock()
     known_urls: set[str] = set()
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert len(results) == 1
@@ -61,16 +70,23 @@ async def test_match_found_is_returned():
 
 @pytest.mark.asyncio
 async def test_no_title_match_returns_empty():
-    body   = {"jobs": [{"title": "Marketing Manager", "url": "https://example.com/job/1"}]}
+    body = {"jobs": [{"title": "Marketing Manager", "url": "https://example.com/job/1"}]}
     client = make_client(make_response(200, body))
     write_lock = asyncio.Lock()
     known_urls: set[str] = set()
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -85,9 +101,16 @@ async def test_empty_jobs_returns_empty():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -102,9 +125,16 @@ async def test_non_200_response_returns_empty():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -120,9 +150,16 @@ async def test_network_error_returns_empty():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -138,9 +175,16 @@ async def test_timeout_returns_empty():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -159,9 +203,16 @@ async def test_malformed_response_returns_empty():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -177,9 +228,16 @@ async def test_duplicate_url_not_written_again():
 
     with patch("crawlers.api_scanner.append_match_row") as mock_write:
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub",
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
         )
 
     assert results == []
@@ -196,9 +254,17 @@ async def test_on_match_callback_invoked():
 
     with patch("crawlers.api_scanner.append_match_row"):
         await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub", on_match=callback,
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
+            on_match=callback,
         )
 
     callback.assert_called_once_with("Acme", "QA Engineer", "QA Engineer", "https://example.com/job/1")
@@ -213,9 +279,17 @@ async def test_on_match_none_does_not_crash():
 
     with patch("crawlers.api_scanner.append_match_row"):
         results = await scan_api(
-            client, make_semaphore(), "Acme", "https://api.example.com/jobs",
-            ["QA Engineer"], "data/match.csv", write_lock, known_urls,
-            extractor=stub_extractor, platform_label="Stub", on_match=None,
+            client,
+            make_semaphore(),
+            "Acme",
+            "https://api.example.com/jobs",
+            ["QA Engineer"],
+            "data/match.csv",
+            write_lock,
+            known_urls,
+            extractor=stub_extractor,
+            platform_label="Stub",
+            on_match=None,
         )
 
     assert len(results) == 1

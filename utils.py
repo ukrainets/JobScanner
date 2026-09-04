@@ -16,11 +16,7 @@ def find_matches(links: list[tuple[str, str]], titles: list[str]) -> list[tuple[
     Deduplicates by href — first matching title per URL wins.
     Regex patterns are pre-compiled once and reused across all links.
     """
-    patterns = [
-        (t, re.compile(r'\b' + re.escape(normalize_text(t)) + r'\b', re.IGNORECASE))
-        for t in titles
-        if normalize_text(t)
-    ]
+    patterns = [(t, re.compile(r"\b" + re.escape(normalize_text(t)) + r"\b", re.IGNORECASE)) for t in titles if normalize_text(t)]
 
     seen, matches = set(), []
     for line, href in links:
@@ -45,8 +41,8 @@ def normalize_text(text: str) -> str:
     normalize_text("  Sr.  QA   Engineer  ")               → "sr. qa engineer"
     normalize_text("(Remote)")                             → ""
     """
-    text = re.sub(r'[\(\[\{][^\)\]\}]*[\)\]\}]', '', text)
-    text = re.sub(r'\s+', ' ', text).strip()
+    text = re.sub(r"[\(\[\{][^\)\]\}]*[\)\]\}]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
     return text.lower()
 
 
@@ -65,10 +61,10 @@ def apply_filters(jobs: list[tuple], filters: dict) -> list[tuple]:
     """
     if not filters or not filters.get("enabled", True):
         return jobs
-    countries      = [c.lower() for c in (filters.get("countries") or [])]
-    states         = [s.lower() for s in (filters.get("states")    or [])]
-    city           = (filters.get("city") or "").lower().strip()
-    remote_only    = filters.get("remote_only",    False)
+    countries = [c.lower() for c in (filters.get("countries") or [])]
+    states = [s.lower() for s in (filters.get("states") or [])]
+    city = (filters.get("city") or "").lower().strip()
+    remote_only = filters.get("remote_only", False)
     full_time_only = filters.get("full_time_only", False)
 
     if not countries and not states and not city and not remote_only and not full_time_only:
@@ -77,10 +73,10 @@ def apply_filters(jobs: list[tuple], filters: dict) -> list[tuple]:
     result = []
     for item in jobs:
         title, url, meta = item
-        loc          = meta.get("location", "").lower()
-        country      = meta.get("country",  "").lower()
-        state        = meta.get("state",    "").lower()
-        is_remote    = meta.get("is_remote")
+        loc = meta.get("location", "").lower()
+        country = meta.get("country", "").lower()
+        state = meta.get("state", "").lower()
+        is_remote = meta.get("is_remote")
         is_full_time = meta.get("is_full_time")
 
         if countries and (country or loc):
@@ -93,7 +89,7 @@ def apply_filters(jobs: list[tuple], filters: dict) -> list[tuple]:
 
         if remote_only and city:
             # OR mode: exclude only when known not-remote AND city confirmed absent
-            not_remote  = (is_remote is False)
+            not_remote = is_remote is False
             not_in_city = bool(loc) and (city not in loc)
             if not_remote and not_in_city:
                 continue

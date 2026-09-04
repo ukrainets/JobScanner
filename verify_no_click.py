@@ -35,38 +35,38 @@ from playwright.sync_api import TimeoutError as PWTimeout
 from playwright.sync_api import sync_playwright
 
 # ── Paths ──────────────────────────────────────────────────────────────────
-DEFAULT_INPUT      = "data/companies.csv"
-DEFAULT_OUTPUT     = "data/companies_verified.csv"
-CHECKPOINT_FILE    = "verify_no_click_checkpoint.csv"
-CHECKPOINT_IDX     = "verify_no_click_checkpoint_idx.json"
+DEFAULT_INPUT = "data/companies.csv"
+DEFAULT_OUTPUT = "data/companies_verified.csv"
+CHECKPOINT_FILE = "verify_no_click_checkpoint.csv"
+CHECKPOINT_IDX = "verify_no_click_checkpoint_idx.json"
 
 # ── Timing ─────────────────────────────────────────────────────────────────
-PAGE_TIMEOUT       = 25_000   # ms – navigation timeout
-EXTRA_WAIT_MS      = 1_800    # ms – pause after domcontentloaded (JS settle)
-MIN_DELAY          = 0.8      # s  – polite delay between requests
-MAX_DELAY          = 2.0
+PAGE_TIMEOUT = 25_000  # ms – navigation timeout
+EXTRA_WAIT_MS = 1_800  # ms – pause after domcontentloaded (JS settle)
+MIN_DELAY = 0.8  # s  – polite delay between requests
+MAX_DELAY = 2.0
 
 # ── Platform URL patterns ──────────────────────────────────────────────────
 # These are deterministic: if the URL loads, the no_click value is known.
 
 TRUE_URL_PATTERNS: list[tuple[str, str]] = [
-    (r"job-boards\.greenhouse\.io/",        "greenhouse-board"),
-    (r"boards\.greenhouse\.io/",            "greenhouse-board"),
-    (r"jobs\.ashbyhq\.com/",               "ashby"),
-    (r"jobs\.lever\.co/",                  "lever"),
-    (r"ats\.rippling\.com/[^/?]+/jobs",    "rippling"),
-    (r"apply\.workable\.com/",             "workable"),
+    (r"job-boards\.greenhouse\.io/", "greenhouse-board"),
+    (r"boards\.greenhouse\.io/", "greenhouse-board"),
+    (r"jobs\.ashbyhq\.com/", "ashby"),
+    (r"jobs\.lever\.co/", "lever"),
+    (r"ats\.rippling\.com/[^/?]+/jobs", "rippling"),
+    (r"apply\.workable\.com/", "workable"),
 ]
 
 FALSE_URL_PATTERNS: list[tuple[str, str]] = [
-    (r"\.myworkdayjobs\.com/",             "workday"),
-    (r"/hcmUI/CandidateExperience/",       "taleo-cloud"),
+    (r"\.myworkdayjobs\.com/", "workday"),
+    (r"/hcmUI/CandidateExperience/", "taleo-cloud"),
     (r"fa\.[a-z0-9-]+\.oraclecloud\.com/", "oracle-cloud"),
-    (r"taleo\.net/",                       "taleo"),
-    (r"\.icims\.com/",                     "icims"),
-    (r"phenom\.people/",                   "phenom"),
-    (r"dayforcehcm\.com/",                 "dayforce"),
-    (r"adp\.com/",                         "adp"),
+    (r"taleo\.net/", "taleo"),
+    (r"\.icims\.com/", "icims"),
+    (r"phenom\.people/", "phenom"),
+    (r"dayforcehcm\.com/", "dayforce"),
+    (r"adp\.com/", "adp"),
 ]
 
 # ── DOM selectors ──────────────────────────────────────────────────────────
@@ -113,16 +113,41 @@ CTA_REGEX = re.compile(
 )
 
 # Words that indicate a link is navigation / footer, not a job title
-NAV_WORDS = frozenset({
-    "home", "about", "contact", "privacy", "terms", "blog",
-    "login", "sign in", "sign up", "subscribe", "menu",
-    "careers", "jobs", "search", "apply", "cookie", "back",
-    "facebook", "twitter", "linkedin", "instagram", "youtube",
-    "english", "deutsch", "français", "español", "italiano",
-})
+NAV_WORDS = frozenset(
+    {
+        "home",
+        "about",
+        "contact",
+        "privacy",
+        "terms",
+        "blog",
+        "login",
+        "sign in",
+        "sign up",
+        "subscribe",
+        "menu",
+        "careers",
+        "jobs",
+        "search",
+        "apply",
+        "cookie",
+        "back",
+        "facebook",
+        "twitter",
+        "linkedin",
+        "instagram",
+        "youtube",
+        "english",
+        "deutsch",
+        "français",
+        "español",
+        "italiano",
+    }
+)
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────
+
 
 def is_skip_row(row: dict) -> bool:
     """Rows with comment 'true+' were manually verified — skip them."""
@@ -157,7 +182,7 @@ def count_direct_job_links(page) -> int:
         "[role='main'] a[href]",
         ".content a[href]",
         "article a[href]",
-        "body a[href]",         # fallback
+        "body a[href]",  # fallback
     ]
     for sel in selectors:
         try:
@@ -241,6 +266,7 @@ def analyze_custom_page(page) -> tuple[str, str]:
 
 # ── Core verification ──────────────────────────────────────────────────────
 
+
 def verify_url(page, url: str, existing: str) -> tuple[str, str]:
     """
     Navigate to url and determine no_click value.
@@ -290,6 +316,7 @@ def verify_url(page, url: str, existing: str) -> tuple[str, str]:
 
 # ── Checkpoint helpers ─────────────────────────────────────────────────────
 
+
 def save_checkpoint(rows: list[dict], fieldnames: list[str], last_idx: int) -> None:
     with open(CHECKPOINT_FILE, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -311,8 +338,8 @@ def load_checkpoint() -> tuple[list[dict], list[str], int]:
 
 # ── Main ───────────────────────────────────────────────────────────────────
 
-def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None:
 
+def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None:
     # Load data
     if resume and Path(CHECKPOINT_FILE).exists() and Path(CHECKPOINT_IDX).exists():
         rows, fieldnames, start_from = load_checkpoint()
@@ -325,9 +352,9 @@ def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None
             rows = [dict(r) for r in reader]
         start_from = 0
 
-    total    = len(rows)
-    to_do    = sum(1 for i, r in enumerate(rows) if i >= start_from and not is_skip_row(r))
-    skipped  = sum(1 for r in rows if is_skip_row(r))
+    total = len(rows)
+    to_do = sum(1 for i, r in enumerate(rows) if i >= start_from and not is_skip_row(r))
+    skipped = sum(1 for r in rows if is_skip_row(r))
 
     print(f"Total rows   : {total}")
     print(f"Skip (true+) : {skipped}")
@@ -336,18 +363,14 @@ def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None
     print(f"Start time   : {datetime.now().strftime('%H:%M')}")
     print("─" * 65)
 
-    changes  = 0
+    changes = 0
     broken_n = 0
-    done     = 0
+    done = 0
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=headless)
         context = browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/134.0.0.0 Safari/537.36"
-            ),
+            user_agent=("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"),
             viewport={"width": 1280, "height": 900},
             java_script_enabled=True,
         )
@@ -356,19 +379,18 @@ def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None
         page.on("console", lambda _: None)
 
         for idx, row in enumerate(rows):
-
             if idx < start_from:
                 continue  # already processed in previous run
 
-            name     = (row.get("company_name") or "").strip()
-            url      = (row.get("open_positions_url") or "").strip()
+            name = (row.get("company_name") or "").strip()
+            url = (row.get("open_positions_url") or "").strip()
             existing = (row.get("no_click") or "").strip()
 
             if is_skip_row(row):
-                print(f"[{idx+1:>3}/{total}] ⏭️  {name} — skip (true+)")
+                print(f"[{idx + 1:>3}/{total}] ⏭️  {name} — skip (true+)")
                 continue
 
-            print(f"[{idx+1:>3}/{total}] 🔎  {name}")
+            print(f"[{idx + 1:>3}/{total}] 🔎  {name}")
 
             new_val, note = verify_url(page, url, existing)
             done += 1
@@ -420,12 +442,13 @@ def run(input_path: str, output_path: str, headless: bool, resume: bool) -> None
 
 # ── CLI ────────────────────────────────────────────────────────────────────
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Verify and update no_click values in companies CSV")
-    parser.add_argument("--input",       default=DEFAULT_INPUT,  help="Path to input CSV")
-    parser.add_argument("--output",      default=DEFAULT_OUTPUT, help="Path to output CSV")
-    parser.add_argument("--no-headless", action="store_true",    help="Show browser window")
-    parser.add_argument("--resume",      action="store_true",    help="Resume from checkpoint")
+    parser.add_argument("--input", default=DEFAULT_INPUT, help="Path to input CSV")
+    parser.add_argument("--output", default=DEFAULT_OUTPUT, help="Path to output CSV")
+    parser.add_argument("--no-headless", action="store_true", help="Show browser window")
+    parser.add_argument("--resume", action="store_true", help="Resume from checkpoint")
     args = parser.parse_args()
 
     run(

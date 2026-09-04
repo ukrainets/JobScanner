@@ -18,11 +18,11 @@ from utils import format_duration
 
 def run_scan() -> None:
     """Execute one full scan. Config is re-read each time so changes take effect."""
-    config    = load_config()
+    config = load_config()
     companies = load_companies(config["companies_file"])
 
     notifications = config.get("notifications_enabled", True)
-    on_match      = notify_match_found if (SLACK_WEBHOOK and notifications) else None
+    on_match = notify_match_found if (SLACK_WEBHOOK and notifications) else None
 
     if notifications:
         notify_scan_started(len(companies))
@@ -31,15 +31,17 @@ def run_scan() -> None:
     if config.get("logging_enabled", True):
         start_log(trigger="scheduler", config=config)
     try:
-        start       = time.time()
-        new_matches = asyncio.run(run(
-            companies_path=config["companies_file"],
-            titles_path=config["titles_file"],
-            headless=True,
-            concurrency=config["concurrency"],
-            output_path=config["output_file"],
-            on_match=on_match,
-        ))
+        start = time.time()
+        new_matches = asyncio.run(
+            run(
+                companies_path=config["companies_file"],
+                titles_path=config["titles_file"],
+                headless=True,
+                concurrency=config["concurrency"],
+                output_path=config["output_file"],
+                on_match=on_match,
+            )
+        )
         duration = format_duration(time.time() - start)
         if notifications:
             notify_scan_done(new_matches, duration)
@@ -51,7 +53,7 @@ def run_scan() -> None:
 
 def run_scheduler(run_now: bool = False) -> None:
     config = load_config()
-    times  = config.get("schedule_times", ["08:08", "13:13", "18:18"])
+    times = config.get("schedule_times", ["08:08", "13:13", "18:18"])
 
     for t in times:
         schedule.every().day.at(t).do(run_scan)

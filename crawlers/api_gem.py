@@ -20,11 +20,17 @@ def extract_gem_jobs(data) -> list[tuple[str, str, dict]]:
             continue
         loc = job.get("location") or {}
         loc_str = loc.get("name", "") if isinstance(loc, dict) else str(loc)
-        result.append((title, url, {
-            "location": loc_str,
-            "country": "",
-            "state": "",
-            "is_remote": None,
-            "is_full_time": None,
-        }))
+        result.append(
+            (
+                title,
+                url,
+                {
+                    "location": loc_str,
+                    "country": "",
+                    "state": "",
+                    "is_remote": None,
+                    "is_full_time": None,
+                },
+            )
+        )
     return result

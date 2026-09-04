@@ -62,11 +62,11 @@ async def scan_api(
                     async with write_lock:
                         if job_url not in known_urls:
                             match_dict = {
-                                "company_name":       name,
-                                "match_title":        title,
-                                "position_title":     scraped_text,
+                                "company_name": name,
+                                "match_title": title,
+                                "position_title": scraped_text,
                                 "match_position_url": job_url,
-                                "time_found":         time_found,
+                                "time_found": time_found,
                             }
                             append_match_row(match_dict, output_path)
                             known_urls.add(job_url)

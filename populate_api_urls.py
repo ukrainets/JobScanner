@@ -30,7 +30,7 @@ import httpx
 
 from config import PLATFORM_REGISTRY
 
-DEFAULT_INPUT  = "data/companies.csv"
+DEFAULT_INPUT = "data/companies.csv"
 DEFAULT_OUTPUT = "data/companies.csv"
 
 
@@ -129,9 +129,9 @@ def run(input_path: str, output_path: str, validate: bool) -> None:
     already_set = 0
 
     for row in rows:
-        platform    = (row.get("hr_platform") or "").strip().lower()
-        existing    = (row.get("api_token") or "").strip()
-        name        = (row.get("company_name") or "(unknown)").strip()
+        platform = (row.get("hr_platform") or "").strip().lower()
+        existing = (row.get("api_token") or "").strip()
+        name = (row.get("company_name") or "(unknown)").strip()
 
         if existing:
             already_set += 1
@@ -179,9 +179,9 @@ def run(input_path: str, output_path: str, validate: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Populate api_url column for supported ATS platforms")
-    parser.add_argument("--input",    default=DEFAULT_INPUT,  help="Path to input CSV")
-    parser.add_argument("--output",   default=DEFAULT_OUTPUT, help="Path to output CSV")
-    parser.add_argument("--validate", action="store_true",    help="HEAD-check each generated URL")
+    parser.add_argument("--input", default=DEFAULT_INPUT, help="Path to input CSV")
+    parser.add_argument("--output", default=DEFAULT_OUTPUT, help="Path to output CSV")
+    parser.add_argument("--validate", action="store_true", help="HEAD-check each generated URL")
     args = parser.parse_args()
 
     run(input_path=args.input, output_path=args.output, validate=args.validate)

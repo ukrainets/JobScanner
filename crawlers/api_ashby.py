@@ -28,11 +28,17 @@ def extract_ashby_jobs(data: dict) -> list[tuple[str, str, dict]]:
             is_remote = True
         emp_type = job.get("employmentType", "")
         is_full_time = (emp_type in ("FullTime", "FULL_TIME")) if emp_type else None
-        result.append((title, url, {
-            "location": loc,
-            "country": "",
-            "state": "",
-            "is_remote": is_remote,
-            "is_full_time": is_full_time,
-        }))
+        result.append(
+            (
+                title,
+                url,
+                {
+                    "location": loc,
+                    "country": "",
+                    "state": "",
+                    "is_remote": is_remote,
+                    "is_full_time": is_full_time,
+                },
+            )
+        )
     return result

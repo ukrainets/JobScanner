@@ -27,6 +27,7 @@ from utils import format_duration
 
 # ── Main run loop ─────────────────────────────────────────────────────────────
 
+
 async def run(
     companies_path: str,
     titles_path: str,
@@ -36,11 +37,11 @@ async def run(
     on_match=None,
     filters: dict | None = None,
 ) -> int:
-    companies  = load_companies(companies_path)
-    titles     = load_titles(titles_path)
+    companies = load_companies(companies_path)
+    titles = load_titles(titles_path)
     start_time = datetime.now()
 
-    api_companies       = [c for c in companies if c["api_token"]]
+    api_companies = [c for c in companies if c["api_token"]]
     playwright_companies = [c for c in companies if not c["api_token"]]
 
     print(f"Start time        : {start_time.strftime('%H:%M')}")
@@ -52,20 +53,14 @@ async def run(
     print(f"Headless          : {headless}")
     print("─" * 60)
 
-    pw_semaphore  = asyncio.Semaphore(concurrency)
+    pw_semaphore = asyncio.Semaphore(concurrency)
     api_semaphore = asyncio.Semaphore(API_CONCURRENCY)
-    write_lock    = asyncio.Lock()
-    known_urls    = load_known_urls(output_path)
+    write_lock = asyncio.Lock()
+    known_urls = load_known_urls(output_path)
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=headless)
-        context = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/134.0.0.0 Safari/537.36"
-            )
-        )
+        context = await browser.new_context(user_agent=("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"))
 
         async with httpx.AsyncClient() as http_client:
             api_tasks = []
@@ -76,25 +71,32 @@ async def run(
                     continue
                 extractor, label = entry
                 api_url = PLATFORM_REGISTRY[c["hr_platform"]]["api_url"].format(token=c["api_token"])
-                api_tasks.append(scan_api(
-                    http_client, api_semaphore, c["company_name"], api_url,
-                    titles, output_path, write_lock, known_urls,
-                    extractor=extractor, platform_label=label, on_match=on_match,
-                    filters=filters,
-                ))
-            pw_tasks = [
-                scan_company(pw_semaphore, context, c["company_name"], c["open_positions_url"], titles, output_path, write_lock, known_urls, on_match)
-                for c in playwright_companies
-            ]
+                api_tasks.append(
+                    scan_api(
+                        http_client,
+                        api_semaphore,
+                        c["company_name"],
+                        api_url,
+                        titles,
+                        output_path,
+                        write_lock,
+                        known_urls,
+                        extractor=extractor,
+                        platform_label=label,
+                        on_match=on_match,
+                        filters=filters,
+                    )
+                )
+            pw_tasks = [scan_company(pw_semaphore, context, c["company_name"], c["open_positions_url"], titles, output_path, write_lock, known_urls, on_match) for c in playwright_companies]
             results = await asyncio.gather(*api_tasks, *pw_tasks)
 
         await browser.close()
 
-    new_matches   = [m for result in results for m in result]
+    new_matches = [m for result in results for m in result]
     total_matches = len(new_matches)
 
     end_time = datetime.now()
-    elapsed  = (end_time - start_time).total_seconds()
+    elapsed = (end_time - start_time).total_seconds()
 
     print("\n" + "─" * 60)
     print(f"🏁  Done in {format_duration(elapsed)}")
@@ -109,6 +111,7 @@ async def run(
 
 # ── CLI entry point ───────────────────────────────────────────────────────────
 
+
 def main():
     config = load_config()
 
@@ -116,47 +119,31 @@ def main():
         description="Scan company career pages for matching job titles.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument(
-        "--companies", default=config["companies_file"],
-        help="Path to companies CSV file"
-    )
-    parser.add_argument(
-        "--titles", default=config["titles_file"],
-        help="Path to titles CSV file"
-    )
-    parser.add_argument(
-        "--concurrency", type=int, default=config["concurrency"],
-        help="Number of parallel browser tabs"
-    )
-    parser.add_argument(
-        "--output", default=config["output_file"],
-        help="Path to output CSV file for matched positions"
-    )
-    parser.add_argument(
-        "--no-headless", action="store_true",
-        help="Run with a visible browser window (useful for debugging)"
-    )
-    parser.add_argument(
-        "--no-log", action="store_true",
-        help="Disable logging to file for this run"
-    )
+    parser.add_argument("--companies", default=config["companies_file"], help="Path to companies CSV file")
+    parser.add_argument("--titles", default=config["titles_file"], help="Path to titles CSV file")
+    parser.add_argument("--concurrency", type=int, default=config["concurrency"], help="Number of parallel browser tabs")
+    parser.add_argument("--output", default=config["output_file"], help="Path to output CSV file for matched positions")
+    parser.add_argument("--no-headless", action="store_true", help="Run with a visible browser window (useful for debugging)")
+    parser.add_argument("--no-log", action="store_true", help="Disable logging to file for this run")
     args = parser.parse_args()
 
     notifications = config.get("notifications_enabled", True)
-    on_match      = notify_match_found if (SLACK_WEBHOOK and notifications) else None
+    on_match = notify_match_found if (SLACK_WEBHOOK and notifications) else None
 
     if not args.no_log and config.get("logging_enabled", True):
         start_log(trigger="manual", config=config)
     try:
-        asyncio.run(run(
-            companies_path=args.companies,
-            titles_path=args.titles,
-            headless=not args.no_headless,
-            concurrency=args.concurrency,
-            output_path=args.output,
-            on_match=on_match,
-            filters=config.get("filters") or {},
-        ))
+        asyncio.run(
+            run(
+                companies_path=args.companies,
+                titles_path=args.titles,
+                headless=not args.no_headless,
+                concurrency=args.concurrency,
+                output_path=args.output,
+                on_match=on_match,
+                filters=config.get("filters") or {},
+            )
+        )
     finally:
         stop_log()
 

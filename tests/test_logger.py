@@ -12,6 +12,7 @@ from logger import _cleanup_old_logs, start_log, stop_log
 
 # ── _cleanup_old_logs() ───────────────────────────────────────────────────────
 
+
 def test_cleanup_deletes_files_older_than_retention(tmp_path):
     old = tmp_path / "2026.01.01_08-00-00_js_run.md"
     old.write_text("old log")
@@ -37,6 +38,7 @@ def test_cleanup_does_not_crash_on_missing_directory():
 
 
 # ── start_log() / stop_log() ──────────────────────────────────────────────────
+
 
 def test_start_log_creates_file_with_correct_header(tmp_path):
     config = {"log_dir": str(tmp_path), "log_retention_days": 30}

@@ -14,6 +14,7 @@ from utils import find_matches
 
 # ── Navigation ────────────────────────────────────────────────────────────────
 
+
 async def navigate(page, url: str, timeout: int) -> None:
     """
     Navigate to URL and wait for DOM to be ready.
@@ -29,6 +30,7 @@ async def navigate(page, url: str, timeout: int) -> None:
 
 # ── Link extraction ───────────────────────────────────────────────────────────
 
+
 async def get_job_links(page, base_url: str) -> list[tuple[str, str]]:
     """
     Extract all anchor elements from the page.
@@ -40,7 +42,7 @@ async def get_job_links(page, base_url: str) -> list[tuple[str, str]]:
     """
     result = []
     for anchor in await page.query_selector_all("a[href]"):
-        href      = await anchor.get_attribute("href") or ""
+        href = await anchor.get_attribute("href") or ""
         link_text = await anchor.inner_text() or ""
         if not href or not link_text.strip():
             continue
@@ -53,6 +55,7 @@ async def get_job_links(page, base_url: str) -> list[tuple[str, str]]:
 
 
 # ── Company scanner ───────────────────────────────────────────────────────────
+
 
 async def scan_company(
     semaphore: asyncio.Semaphore,
@@ -85,7 +88,7 @@ async def scan_company(
     """
     async with semaphore:
         page = await context.new_page()
-        lines     = [f"\n🔎  Scanning : {name} - {url}"]
+        lines = [f"\n🔎  Scanning : {name} - {url}"]
         new_found = []
         try:
             # Fix 1 + Fix 4 — load with domcontentloaded, retry once on timeout
@@ -116,11 +119,11 @@ async def scan_company(
                     async with write_lock:
                         if job_url not in known_urls:
                             match_dict = {
-                                "company_name":       name,
-                                "match_title":        title,
-                                "position_title":     scraped_text,
+                                "company_name": name,
+                                "match_title": title,
+                                "position_title": scraped_text,
                                 "match_position_url": job_url,
-                                "time_found":         time_found,
+                                "time_found": time_found,
                             }
                             append_match_row(match_dict, output_path)
                             known_urls.add(job_url)

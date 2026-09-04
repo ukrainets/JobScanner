@@ -17,7 +17,8 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
-        "--run-now", action="store_true",
+        "--run-now",
+        action="store_true",
         help="Run a scan immediately on startup, then follow the schedule",
     )
     args = parser.parse_args()

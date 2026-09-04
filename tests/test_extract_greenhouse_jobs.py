@@ -18,13 +18,15 @@ def test_returns_title_and_absolute_url():
 
 
 def test_multiple_jobs():
-    data = {"jobs": [
-        {"title": "QA Engineer",   "absolute_url": "https://example.com/job/1"},
-        {"title": "SDET",          "absolute_url": "https://example.com/job/2"},
-    ]}
+    data = {
+        "jobs": [
+            {"title": "QA Engineer", "absolute_url": "https://example.com/job/1"},
+            {"title": "SDET", "absolute_url": "https://example.com/job/2"},
+        ]
+    }
     assert titles_and_urls(extract_greenhouse_jobs(data)) == [
         ("QA Engineer", "https://example.com/job/1"),
-        ("SDET",        "https://example.com/job/2"),
+        ("SDET", "https://example.com/job/2"),
     ]
 
 
@@ -56,8 +58,7 @@ def test_none_jobs_value():
 
 
 def test_meta_location_extracted():
-    data = {"jobs": [{"title": "QA Engineer", "absolute_url": "https://example.com/job/1",
-                      "location": {"name": "San Francisco, CA"}}]}
+    data = {"jobs": [{"title": "QA Engineer", "absolute_url": "https://example.com/job/1", "location": {"name": "San Francisco, CA"}}]}
     _, _, meta = extract_greenhouse_jobs(data)[0]
     assert meta["location"] == "San Francisco, CA"
     assert meta["country"] == ""

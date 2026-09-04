@@ -42,7 +42,7 @@ def load_companies(path: str) -> list[dict]:
                 continue
 
             name = (row.get("company_name") or "").strip()
-            url  = (row.get("open_positions_url") or "").strip()
+            url = (row.get("open_positions_url") or "").strip()
             if not name or not url or url in seen:
                 continue
             if not _is_safe_url(url):
@@ -52,13 +52,15 @@ def load_companies(path: str) -> list[dict]:
             seen.add(url)
             raw_rating = (row.get("rating") or "").strip()
             rating = float(raw_rating) if raw_rating else 0.0
-            companies.append({
-                "company_name":       name,
-                "open_positions_url": url,
-                "hr_platform":        (row.get("hr_platform") or "").strip().lower(),
-                "api_token":          (row.get("api_token") or "").strip(),
-                "_rating":            rating,
-            })
+            companies.append(
+                {
+                    "company_name": name,
+                    "open_positions_url": url,
+                    "hr_platform": (row.get("hr_platform") or "").strip().lower(),
+                    "api_token": (row.get("api_token") or "").strip(),
+                    "_rating": rating,
+                }
+            )
 
     companies.sort(key=lambda c: c["_rating"], reverse=True)
     for c in companies:
@@ -92,11 +94,7 @@ def load_known_urls(path: str) -> set[str]:
     if not p.exists():
         return set()
     with open(p, newline="", encoding="utf-8") as f:
-        return {
-            row["match_position_url"]
-            for row in csv.DictReader(f)
-            if row.get("id") and row.get("match_position_url")
-        }
+        return {row["match_position_url"] for row in csv.DictReader(f) if row.get("id") and row.get("match_position_url")}
 
 
 def _migrate_header_if_needed(path: Path) -> None:
@@ -106,12 +104,12 @@ def _migrate_header_if_needed(path: Path) -> None:
     empty values for any new columns when read back via DictReader.
     """
     content = path.read_text(encoding="utf-8")
-    lines   = content.splitlines(keepends=True)
+    lines = content.splitlines(keepends=True)
     if not lines:
         return
     expected_header = ",".join(CSV_COLUMNS)
     if lines[0].rstrip("\r\n") == expected_header:
-        return                                      # already up to date
+        return  # already up to date
     lines[0] = expected_header + "\n"
     path.write_text("".join(lines), encoding="utf-8")
 
@@ -148,13 +146,15 @@ def append_match_row(match: dict, path: str) -> None:
         writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
         if not file_exists:
             writer.writeheader()
-        writer.writerow({
-            "id":                 str(uuid.uuid4()),
-            "company_name":       match["company_name"],
-            "match_title":        match["match_title"],
-            "position_title":     match["position_title"],
-            "match_position_url": match["match_position_url"],
-            "time_found":         match["time_found"],
-            "reviewed":           "",
-            "comment":            "",
-        })
+        writer.writerow(
+            {
+                "id": str(uuid.uuid4()),
+                "company_name": match["company_name"],
+                "match_title": match["match_title"],
+                "position_title": match["position_title"],
+                "match_position_url": match["match_position_url"],
+                "time_found": match["time_found"],
+                "reviewed": "",
+                "comment": "",
+            }
+        )
