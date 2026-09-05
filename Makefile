@@ -22,7 +22,7 @@ debug:
 	$(PYTHON) main.py --no-headless --no-log
 
 install:
-	$(PIP) install -r requirements.txt -r requirements-dev.txt && $(PLAYWRIGHT) install chromium
+	$(PIP) install -r requirements.txt -r requirements-dev.txt && $(PLAYWRIGHT) install chromium chromium-headless-shell
 
 lint:
 	$(RUFF) check .
