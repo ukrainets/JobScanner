@@ -1,5 +1,6 @@
 {
   "concurrency": 5,
+  "api_concurrency": 20,
   "companies_file": "data/companies.csv",
   "titles_file": "data/sqa_titles.csv",
   "output_file": "data/match.csv",

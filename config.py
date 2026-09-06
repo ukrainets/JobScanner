@@ -10,7 +10,6 @@ CONFIG_FILE = "config.json"
 PAGE_TIMEOUT = 30_000  # ms — first navigation attempt
 PAGE_TIMEOUT_RETRY = 60_000  # ms — single retry after timeout
 PAGE_SETTLE_MS = 2_000  # ms — wait after domcontentloaded for JS to render
-API_CONCURRENCY = 20  # max concurrent Greenhouse API requests
 
 # ── ATS platform registry — single source of truth for all ATS integrations ──
 PLATFORM_REGISTRY: dict[str, dict] = {
@@ -38,6 +37,7 @@ PLATFORM_REGISTRY: dict[str, dict] = {
 
 CONFIG_DEFAULTS = {
     "concurrency": 5,
+    "api_concurrency": 20,
     "companies_file": "data/companies.csv",
     "titles_file": "data/sqa_titles.csv",
     "output_file": "data/match.csv",

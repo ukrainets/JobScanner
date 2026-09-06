@@ -31,7 +31,7 @@ The tool scans company career pages for matching job titles. Each `run()` call i
 
 1. Load companies and titles from CSV → split into **API companies** (have `api_url`) and **Playwright companies** (don't).
 2. Launch one shared `httpx.AsyncClient` and one shared Playwright browser context for the entire run.
-3. Run both groups concurrently via `asyncio.gather`. API group is capped by `API_CONCURRENCY=20` semaphore; Playwright group by the `concurrency` config value (default 5 tabs).
+3. Run both groups concurrently via `asyncio.gather`. API group is capped by the `api_concurrency` config value (default 20); Playwright group by the `concurrency` config value (default 5 tabs).
 4. Each scanner writes matches under a shared `write_lock` and checks a shared `known_urls` set to prevent duplicates within the same run and against the existing `match.csv`.
 
 ### Two scanning paths
@@ -55,7 +55,7 @@ Three files need changes:
 
 | File | Role |
 |------|------|
-| [config.py](config.py) | Constants (`PAGE_TIMEOUT`, `API_CONCURRENCY`) and `load_config()` which merges `config.json` with defaults |
+| [config.py](config.py) | Constants (`PAGE_TIMEOUT`) and `load_config()` which merges `config.json` with defaults (`concurrency`, `api_concurrency`, ...) |
 | [config.json](config.json) | Runtime config — re-read before each scheduler run without restart |
 | [csv_io.py](csv_io.py) | `load_companies`, `load_titles`, `load_known_urls`, `append_match_row`; includes schema migration for `match.csv` |
 | [utils.py](utils.py) | `find_matches` and `normalize_text` — core matching logic |

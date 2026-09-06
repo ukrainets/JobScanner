@@ -109,7 +109,7 @@ python scheduler.py --run-now   # run a scan immediately, then follow the schedu
 3. **Load titles** — reads titles CSV, extracts `title` column, deduplicates
 4. **Launch browser** — starts a single headless Chromium instance via async Playwright
 5. **Scan companies concurrently** — companies with a populated `api_url` are routed to the API scanner; the rest use Playwright:
-   - **API path** (Greenhouse, Ashby): sends an HTTP GET to `api_url`, parses JSON, extracts job titles and URLs via a per-platform extractor. Ashby filters out `isListed=false` jobs. Up to `API_CONCURRENCY` (20) requests run in parallel.
+   - **API path** (Greenhouse, Ashby): sends an HTTP GET to `api_url`, parses JSON, extracts job titles and URLs via a per-platform extractor. Ashby filters out `isListed=false` jobs. Up to `api_concurrency` requests run in parallel.
    - **Playwright path**: opens up to `concurrency` browser tabs; navigates to `open_positions_url`, extracts all `<a>` tags, matches titles against link text
    - If a new match is found, it is written to `data/match.csv` and (if configured) a Slack notification is sent
 6. **Print summary** — elapsed time, companies searched, and matches found

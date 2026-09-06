@@ -16,7 +16,7 @@ from datetime import datetime
 import httpx
 from playwright.async_api import async_playwright
 
-from config import API_CONCURRENCY, PLATFORM_REGISTRY, load_config
+from config import PLATFORM_REGISTRY, load_config
 from crawlers.api_registry import API_EXTRACTORS
 from crawlers.api_scanner import scan_api
 from crawlers.scanner import scan_company
@@ -33,6 +33,7 @@ async def run(
     titles_path: str,
     headless: bool,
     concurrency: int,
+    api_concurrency: int,
     output_path: str,
     on_match=None,
     filters: dict | None = None,
@@ -49,12 +50,12 @@ async def run(
     print(f"  → API           : {len(api_companies)}")
     print(f"  → Playwright    : {len(playwright_companies)}")
     print(f"Titles loaded     : {len(titles)}")
-    print(f"Concurrency       : {concurrency} tab(s) / {API_CONCURRENCY} API")
+    print(f"Concurrency       : {concurrency} tab(s) / {api_concurrency} API")
     print(f"Headless          : {headless}")
     print("─" * 60)
 
     pw_semaphore = asyncio.Semaphore(concurrency)
-    api_semaphore = asyncio.Semaphore(API_CONCURRENCY)
+    api_semaphore = asyncio.Semaphore(api_concurrency)
     write_lock = asyncio.Lock()
     known_urls = load_known_urls(output_path)
 
@@ -122,6 +123,7 @@ def main():
     parser.add_argument("--companies", default=config["companies_file"], help="Path to companies CSV file")
     parser.add_argument("--titles", default=config["titles_file"], help="Path to titles CSV file")
     parser.add_argument("--concurrency", type=int, default=config["concurrency"], help="Number of parallel browser tabs")
+    parser.add_argument("--api-concurrency", type=int, default=config["api_concurrency"], help="Number of parallel API requests")
     parser.add_argument("--output", default=config["output_file"], help="Path to output CSV file for matched positions")
     parser.add_argument("--no-headless", action="store_true", help="Run with a visible browser window (useful for debugging)")
     parser.add_argument("--no-log", action="store_true", help="Disable logging to file for this run")
@@ -139,6 +141,7 @@ def main():
                 titles_path=args.titles,
                 headless=not args.no_headless,
                 concurrency=args.concurrency,
+                api_concurrency=args.api_concurrency,
                 output_path=args.output,
                 on_match=on_match,
                 filters=config.get("filters") or {},
