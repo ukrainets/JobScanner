@@ -38,6 +38,7 @@ def run_scan() -> None:
                 titles_path=config["titles_file"],
                 headless=True,
                 concurrency=config["concurrency"],
+                api_concurrency=config["api_concurrency"],
                 output_path=config["output_file"],
                 on_match=on_match,
             )
