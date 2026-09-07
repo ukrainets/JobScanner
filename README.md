@@ -26,8 +26,10 @@ source .venv/bin/activate        # macOS/Linux
 pip install -r requirements.txt        # runtime dependencies
 pip install -r requirements-dev.txt   # dev tools (Ruff linter)
 
-# 3. Install Playwright's Chromium browser
-playwright install chromium
+# 3. Install Playwright's Chromium browser (both are required:
+#    the tool runs headless by default, which uses the separate
+#    headless-shell binary, not the regular Chromium build)
+playwright install chromium chromium-headless-shell
 ```
 4. Copy companies.csv and sqa_titles.csv files from `test/test_data` to `data` folder
 
