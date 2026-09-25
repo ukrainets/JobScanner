@@ -97,6 +97,21 @@ python scheduler.py             # start scheduler, wait for first scheduled time
 python scheduler.py --run-now   # run a scan immediately, then follow the schedule
 ```
 
+#### Maintenance scripts
+Standalone tools in `scripts/` for keeping `companies.csv` up to date. Run them as modules from the project root (`python -m scripts.<name>`). Running `python scripts/<name>.py` directly fails, because the scripts import `config` from the root.
+
+```bash
+# Fill the api_url column after adding companies (same as `make populate`)
+python -m scripts.populate_api_urls
+python -m scripts.populate_api_urls --validate     # also HEAD-check each generated URL
+python -m scripts.populate_api_urls --input data/companies.csv --output data/companies.csv
+
+# Visit each open_positions_url and set the correct no_click value
+python -m scripts.verify_no_click                  # reads data/companies.csv, writes data/companies_verified.csv
+python -m scripts.verify_no_click --resume         # continue from the last checkpoint
+python -m scripts.verify_no_click --no-headless    # show browser window
+```
+
 ---
 
 ## How It Works

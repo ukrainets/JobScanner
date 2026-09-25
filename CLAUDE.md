@@ -23,7 +23,12 @@ make format     # auto-format code (Ruff)
 
 # Populate API URLs with validation
 python -m scripts.populate_api_urls --validate
+
+# Verify no_click values (writes data/companies_verified.csv)
+python -m scripts.verify_no_click
 ```
+
+Scripts in `scripts/` must be run as modules (`python -m scripts.<name>`) from the repo root — `python scripts/<name>.py` breaks their `from config import`.
 
 ## Architecture
 
