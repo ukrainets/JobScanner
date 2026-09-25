@@ -22,7 +22,7 @@ make format     # auto-format code (Ruff)
 .venv/bin/pytest tests/test_find_matches.py::test_name -v  # Example only
 
 # Populate API URLs with validation
-python populate_api_urls.py --validate
+python -m scripts.populate_api_urls --validate
 ```
 
 ## Architecture
@@ -42,24 +42,24 @@ The tool scans company career pages for matching job titles. Each `run()` call i
 
 ### Matching logic
 
-`find_matches` in [utils.py](utils.py) uses word-boundary regex against normalized link text. `normalize_text` strips bracket groups — `()`, `[]`, `{}` — so qualifiers like `(Remote)` or `(Contract)` are ignored on both sides. First matching title per URL wins; same URL is never returned twice.
+`find_matches` in [core/utils.py](core/utils.py) uses word-boundary regex against normalized link text. `normalize_text` strips bracket groups — `()`, `[]`, `{}` — so qualifiers like `(Remote)` or `(Contract)` are ignored on both sides. First matching title per URL wins; same URL is never returned twice.
 
 ### Adding a new ATS platform
 
 Three files need changes:
 1. Create `crawlers/api_{platform}.py` with an extractor: `(json_data: dict) -> list[tuple[str, str]]` returning `(title, absolute_url)` pairs.
 2. Add one entry to `API_EXTRACTORS` in [crawlers/api_registry.py](crawlers/api_registry.py).
-3. Add one entry to `PLATFORM_REGISTRY` in [populate_api_urls.py](populate_api_urls.py) (known hosts + API URL template with `{token}`), then run `make populate`.
+3. Add one entry to `PLATFORM_REGISTRY` in [config.py](config.py) (known hosts + API URL template with `{token}`), then run `make populate`.
 
 ### Key files
 
 | File | Role |
 |------|------|
-| [config.py](config.py) | Constants (`PAGE_TIMEOUT`) and `load_config()` which merges `config.json` with defaults (`concurrency`, `api_concurrency`, ...) |
+| [config.py](config.py) | Constants (`PAGE_TIMEOUT`), `PLATFORM_REGISTRY`, and `load_config()` which merges `config.json` with defaults (`concurrency`, `api_concurrency`, ...) |
 | [config.json](config.json) | Runtime config — re-read before each scheduler run without restart |
-| [csv_io.py](csv_io.py) | `load_companies`, `load_titles`, `load_known_urls`, `append_match_row`; includes schema migration for `match.csv` |
-| [utils.py](utils.py) | `find_matches` and `normalize_text` — core matching logic |
-| [populate_api_urls.py](populate_api_urls.py) | Standalone script to fill `api_url` column — run after adding companies to CSV |
+| [core/csv_io.py](core/csv_io.py) | `load_companies`, `load_titles`, `load_known_urls`, `append_match_row`; includes schema migration for `match.csv` |
+| [core/utils.py](core/utils.py) | `find_matches` and `normalize_text` — core matching logic |
+| [scripts/populate_api_urls.py](scripts/populate_api_urls.py) | Standalone script to fill `api_url` column — run after adding companies to CSV |
 
 ### companies.csv requirements
 
@@ -71,7 +71,7 @@ Three files need changes:
 
 `id, company_name, match_title, position_title, match_position_url, time_found, reviewed, comment`
 
-`csv_io.py` has schema migration (`_migrate_header_if_needed`) that updates the header in place when columns are added, without touching existing data rows.
+`core/csv_io.py` has schema migration (`_migrate_header_if_needed`) that updates the header in place when columns are added, without touching existing data rows.
 
 ### Slack notifications
 

@@ -7,7 +7,7 @@ Run with: pytest tests/test_load_companies.py -v
 
 import csv
 
-from csv_io import load_companies
+from core.csv_io import load_companies
 
 FIXTURE = "tests/test_data/companies.csv"
 

@@ -16,7 +16,7 @@ test:
 	$(PYTEST) tests/ -v
 
 populate:
-	$(PYTHON) populate_api_urls.py
+	$(PYTHON) -m scripts.populate_api_urls
 
 debug:
 	$(PYTHON) main.py --no-headless --no-log

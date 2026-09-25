@@ -8,7 +8,7 @@ import os
 import re
 import time
 
-from logger import _cleanup_old_logs, start_log, stop_log
+from core.logger import _cleanup_old_logs, start_log, stop_log
 
 # ── _cleanup_old_logs() ───────────────────────────────────────────────────────
 

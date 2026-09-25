@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 import httpx
 import pytest
 
-from populate_api_urls import derive_candidate_token, probe_api
+from scripts.populate_api_urls import derive_candidate_token, probe_api
 
 # ── derive_candidate_token ────────────────────────────────────────────────────
 
@@ -71,14 +71,14 @@ def test_probe_returns_true_on_200_greenhouse():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
     mock_resp.url = "https://boards-api.greenhouse.io/v1/boards/upwork/jobs"
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp):
         assert probe_api("upwork", "greenhouse") is True
 
 
 def test_probe_returns_false_on_404_greenhouse():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 404
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp):
         assert probe_api("doesnotexist", "greenhouse") is False
 
 
@@ -86,31 +86,31 @@ def test_probe_returns_true_on_200_ashby():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
     mock_resp.url = "https://api.ashbyhq.com/posting-api/job-board/airtable"
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp):
         assert probe_api("airtable", "ashby") is True
 
 
 def test_probe_returns_false_on_404_ashby():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 404
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp):
         assert probe_api("doesnotexist", "ashby") is False
 
 
 def test_probe_returns_false_on_network_error():
-    with patch("populate_api_urls.httpx.get", side_effect=httpx.ConnectError("unreachable")):
+    with patch("scripts.populate_api_urls.httpx.get", side_effect=httpx.ConnectError("unreachable")):
         assert probe_api("upwork", "greenhouse") is False
 
 
 def test_probe_returns_false_on_timeout():
-    with patch("populate_api_urls.httpx.get", side_effect=httpx.TimeoutException("timed out")):
+    with patch("scripts.populate_api_urls.httpx.get", side_effect=httpx.TimeoutException("timed out")):
         assert probe_api("upwork", "greenhouse") is False
 
 
 def test_probe_uses_correct_greenhouse_url():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp) as mock_get:
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp) as mock_get:
         probe_api("webflow", "greenhouse")
     mock_get.assert_called_once_with(
         "https://boards-api.greenhouse.io/v1/boards/webflow/jobs",
@@ -122,7 +122,7 @@ def test_probe_uses_correct_greenhouse_url():
 def test_probe_uses_correct_ashby_url():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp) as mock_get:
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp) as mock_get:
         probe_api("airtable", "ashby")
     mock_get.assert_called_once_with(
         "https://api.ashbyhq.com/posting-api/job-board/airtable",
@@ -139,5 +139,5 @@ def test_probe_returns_false_when_redirected_to_http():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
     mock_resp.url = "http://boards-api.greenhouse.io/v1/boards/upwork/jobs"
-    with patch("populate_api_urls.httpx.get", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.get", return_value=mock_resp):
         assert probe_api("upwork", "greenhouse") is False

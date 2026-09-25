@@ -7,7 +7,7 @@ Run with: pytest tests/test_extract_board_token.py -v
 
 import pytest
 
-from populate_api_urls import extract_board_token
+from scripts.populate_api_urls import extract_board_token
 
 # ── Greenhouse ────────────────────────────────────────────────────────────────
 
