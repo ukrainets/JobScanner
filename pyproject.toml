@@ -6,5 +6,5 @@ line-length = 200
 select = ["E", "F", "W", "I", "B"]
 
 [tool.ruff.lint.per-file-ignores]
-"populate_api_urls.py" = ["E402"]
-"verify_no_click.py" = ["E402"]
+"scripts/populate_api_urls.py" = ["E402"]
+"scripts/verify_no_click.py" = ["E402"]

@@ -11,10 +11,10 @@ Visits every open_positions_url and sets the correct no_click value.
 
 Usage
 -----
-    python verify_no_click.py                         # default paths
-    python verify_no_click.py --input  path/to/in.csv --output path/to/out.csv
-    python verify_no_click.py --resume                # continue from checkpoint
-    python verify_no_click.py --no-headless           # show browser window
+    python -m scripts.verify_no_click                         # default paths
+    python -m scripts.verify_no_click --input  path/to/in.csv --output path/to/out.csv
+    python -m scripts.verify_no_click --resume                # continue from checkpoint
+    python -m scripts.verify_no_click --no-headless           # show browser window
 
 Checkpoint
 ----------

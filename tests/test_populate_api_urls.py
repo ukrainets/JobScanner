@@ -10,7 +10,7 @@ from unittest.mock import MagicMock, patch
 
 import httpx
 
-from populate_api_urls import run, validate_url
+from scripts.populate_api_urls import run, validate_url
 
 
 def write_csv(path, rows: list[list]) -> None:
@@ -59,7 +59,7 @@ def test_validate_url_returns_true_on_https_destination():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
     mock_resp.url = "https://example.com/jobs"
-    with patch("populate_api_urls.httpx.head", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.head", return_value=mock_resp):
         assert validate_url("https://example.com/jobs") is True
 
 
@@ -67,7 +67,7 @@ def test_validate_url_returns_false_when_redirected_to_http():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 200
     mock_resp.url = "http://example.com/jobs"
-    with patch("populate_api_urls.httpx.head", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.head", return_value=mock_resp):
         assert validate_url("https://example.com/jobs") is False
 
 
@@ -75,12 +75,12 @@ def test_validate_url_returns_false_on_4xx():
     mock_resp = MagicMock(spec=httpx.Response)
     mock_resp.status_code = 404
     mock_resp.url = "https://example.com/jobs"
-    with patch("populate_api_urls.httpx.head", return_value=mock_resp):
+    with patch("scripts.populate_api_urls.httpx.head", return_value=mock_resp):
         assert validate_url("https://example.com/jobs") is False
 
 
 def test_validate_url_returns_false_on_network_error():
-    with patch("populate_api_urls.httpx.head", side_effect=httpx.ConnectError("unreachable")):
+    with patch("scripts.populate_api_urls.httpx.head", side_effect=httpx.ConnectError("unreachable")):
         assert validate_url("https://example.com/jobs") is False
 
 

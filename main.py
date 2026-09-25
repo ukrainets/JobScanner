@@ -17,13 +17,13 @@ import httpx
 from playwright.async_api import async_playwright
 
 from config import PLATFORM_REGISTRY, load_config
+from core.csv_io import load_companies, load_known_urls, load_titles
+from core.logger import start_log, stop_log
+from core.utils import format_duration
 from crawlers.api_registry import API_EXTRACTORS
 from crawlers.api_scanner import scan_api
 from crawlers.scanner import scan_company
-from csv_io import load_companies, load_known_urls, load_titles
 from integrations.notifier import SLACK_WEBHOOK, notify_match_found
-from logger import start_log, stop_log
-from utils import format_duration
 
 # ── Main run loop ─────────────────────────────────────────────────────────────
 

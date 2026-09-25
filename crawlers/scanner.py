@@ -9,8 +9,8 @@ from urllib.parse import urljoin
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from config import PAGE_SETTLE_MS, PAGE_TIMEOUT, PAGE_TIMEOUT_RETRY
-from csv_io import append_match_row
-from utils import find_matches
+from core.csv_io import append_match_row
+from core.utils import find_matches
 
 # ── Navigation ────────────────────────────────────────────────────────────────
 

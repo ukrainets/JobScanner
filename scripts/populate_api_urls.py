@@ -15,9 +15,9 @@ Run once after adding new companies to keep the api_url column current.
 
 Usage
 -----
-    python populate_api_urls.py
-    python populate_api_urls.py --input data/companies.csv --output data/companies.csv
-    python populate_api_urls.py --validate   # HEAD-check each generated URL
+    python -m scripts.populate_api_urls
+    python -m scripts.populate_api_urls --input data/companies.csv --output data/companies.csv
+    python -m scripts.populate_api_urls --validate   # HEAD-check each generated URL
 """
 
 import argparse

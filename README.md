@@ -279,14 +279,18 @@ job_search/
 ├── integrations/
 │   ├── notifier.py             # Slack notifications via webhook
 │   └── scheduler.py            # Scheduler logic (times, run loop)
+├── core/
+│   ├── logger.py                # Scan run logging (Tee stdout → markdown file)
+│   ├── csv_io.py                # CSV read/write functions
+│   └── utils.py                 # Shared helpers
+├── scripts/
+│   ├── populate_api_urls.py     # Fills api_url column after adding companies
+│   └── verify_no_click.py       # Sets no_click value via Playwright
 ├── tests/                      # Test suite
 ├── logs/                           # Per-run log files (git-ignored, auto-created)
 ├── main.py                     # Entry point — one-off scan
 ├── scheduler.py                # Entry point — scheduled scan
-├── logger.py                   # Scan run logging (Tee stdout → markdown file)
-├── config.py                   # Constants and config loader
-├── csv_io.py                   # CSV read/write functions
-├── utils.py                    # Shared helpers
+├── config.py                   # Constants, PLATFORM_REGISTRY and config loader
 ├── config.json                 # Runtime configuration
 ├── .env.example                # Slack webhook setup template
 ├── requirements.txt            # Python dependencies

@@ -13,8 +13,8 @@ from typing import Callable
 
 import httpx
 
-from csv_io import append_match_row
-from utils import apply_filters, find_matches
+from core.csv_io import append_match_row
+from core.utils import apply_filters, find_matches
 
 
 async def scan_api(

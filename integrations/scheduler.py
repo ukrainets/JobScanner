@@ -9,11 +9,11 @@ from datetime import datetime
 import schedule
 
 from config import load_config
-from csv_io import load_companies
+from core.csv_io import load_companies
+from core.logger import start_log, stop_log
+from core.utils import format_duration
 from integrations.notifier import SLACK_WEBHOOK, notify_match_found, notify_scan_done, notify_scan_started
-from logger import start_log, stop_log
 from main import run
-from utils import format_duration
 
 
 def run_scan() -> None:
