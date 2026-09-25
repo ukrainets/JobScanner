@@ -1,5 +1,7 @@
 # JS — Job Search
 
+[![CI](https://github.com/ukrainets/JobScanner/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ukrainets/JobScanner/actions/workflows/ci.yml)
+
 A tool that automates scanning companies career pages for matching job titles.
 
 **Purpose**  
